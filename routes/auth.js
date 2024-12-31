@@ -168,4 +168,66 @@ router.get('/users', (req, res) => {
       });
   });
 });
+
+
+
+router.put('/updateuser/:id', (req, res) => {
+  const id = req.params.id;
+  const { name, email } = req.body;
+  const query = 'UPDATE users SET name = ?, email = ? WHERE id = ?';
+  
+  db.query(query, [name, email, id], (error, results) => {
+      if (error) {
+          return res.status(500).json({
+              status: 'error',
+              message: 'Error updating user',
+              error: error
+          });
+      }
+
+      // If no user found
+      if (results.affectedRows === 0) {
+          return res.status(404).json({
+              status: 'error',
+              message: 'User not found'
+          });
+      }
+
+      // Return success
+      res.status(200).json({
+          status: 'success',
+          message: 'User updated successfully'
+      });
+  });
+});
+
+
+router.delete('/deleteuser/:id', (req, res) => {
+  const id = req.params.id;
+  const query = 'DELETE FROM users WHERE id = ?';
+  
+  db.query(query, [id], (error, results) => {
+      if (error) {
+          return res.status(500).json({
+              status: 'error',
+              message: 'Error deleting user',
+              error: error
+          });
+      }
+
+      // If no user found
+      if (results.affectedRows === 0) {
+          return res.status(404).json({
+              status: 'error',
+              message: 'User not found'
+          });
+      }
+
+      // Return success
+      res.status(200).json({
+          status: 'success',
+          message: 'User deleted successfully'
+      });
+  });
+});
 module.exports = router;
